@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6694330007159636654}
   - component: {fileID: 6183310784574933982}
-  - component: {fileID: 441515862906965582}
+  - component: {fileID: 1194997312992813315}
   m_Layer: 0
   m_Name: Slope Left
   m_TagString: Untagged
@@ -91,8 +91,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &441515862906965582
-BoxCollider2D:
+--- !u!68 &1194997312992813315
+EdgeCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -126,14 +126,15 @@ BoxCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 2
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+  m_Points:
+  - {x: 0.42021632, y: -0.4905652}
+  - {x: 0.5017079, y: -0.501665}
+  - {x: -0.502681, y: -0.50042367}
+  - {x: 0.49874663, y: 0.49875826}
+  - {x: 0.49943486, y: -0.04748839}
+  - {x: 0.5, y: -0.49605143}
+  m_AdjacentStartPoint: {x: 0, y: 0}
+  m_AdjacentEndPoint: {x: 0, y: 0}
+  m_UseAdjacentStartPoint: 0
+  m_UseAdjacentEndPoint: 0
