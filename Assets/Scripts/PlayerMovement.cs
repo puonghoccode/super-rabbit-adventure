@@ -80,8 +80,9 @@ public class PlayerMovement : MonoBehaviour
         velocity.x = Mathf.MoveTowards(velocity.x, inputAxis * moveSpeed, moveSpeed * Time.deltaTime);
 
         // Check if running into a wall
-        if (rb.Raycast(Vector2.right * velocity.x)) {
-            velocity.x = 0f;
+        if (velocity.x != 0f) {
+            Vector2 dir = velocity.x > 0f ? Vector2.right : Vector2.left;
+            if (rb.Raycast(dir)) velocity.x = 0f;
         }
 
         // Flip sprite to face direction

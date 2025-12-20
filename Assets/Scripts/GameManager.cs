@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
         lives = 3;
         coins = 0;
 
-        LoadLevel(1, 1);
+        LoadLevel(1, 0);
     }
 
     public void GameOver()

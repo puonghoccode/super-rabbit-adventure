@@ -14,11 +14,12 @@ public static class Extensions
             return false;
         }
 
-        Vector2 edge = rigidbody.ClosestPoint(rigidbody.position + direction);
-        float radius = (edge - rigidbody.position).magnitude / 2f;
+        Vector2 origin = rigidbody.worldCenterOfMass;
+        Vector2 edge = rigidbody.ClosestPoint(origin + direction);
+        float radius = (edge - origin).magnitude / 2f;
         float distance = radius + 0.125f;
 
-        Vector2 point = rigidbody.position + (direction.normalized * distance);
+        Vector2 point = origin + (direction.normalized * distance);
         Collider2D collider = Physics2D.OverlapCircle(point, radius, layerMask);
         return collider != null && collider.attachedRigidbody != rigidbody;
     }
