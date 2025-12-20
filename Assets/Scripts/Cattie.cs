@@ -8,7 +8,7 @@ public class Cattie : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player") && collision.gameObject.TryGetComponent(out Player player))
         {
-            if (player.starpower) {
+            if (player.jellypower) {
                 Hit();
             } else if (collision.transform.DotTest(transform, Vector2.down)) {
                 Flatten();

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7164301613358092327}
   - component: {fileID: 844660560718565459}
   - component: {fileID: 266029910459219506}
+  - component: {fileID: 557046334111745097}
   m_Layer: 6
   m_Name: Lot of Coin
   m_TagString: Untagged
@@ -155,8 +156,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.012870185}
-  m_Radius: 0.25
+  m_Offset: {x: 0, y: 0.477496}
+  m_Radius: 0.4319787
 --- !u!114 &844660560718565459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -205,7 +206,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.017186493, y: -0.02291511}
+  m_Offset: {x: -0.0016989112, y: 0.69144714}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
@@ -215,5 +216,18 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.5073219, y: 0.47294858}
+  m_Size: {x: 1.0106663, y: 1.3828409}
   m_EdgeRadius: 0
+--- !u!114 &557046334111745097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 244429668259978094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abd7011d1ad04f046a15f9fdb4f60627, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PowerUp
+  type: 0
