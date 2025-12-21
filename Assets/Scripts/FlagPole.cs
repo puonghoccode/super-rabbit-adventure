@@ -9,12 +9,12 @@ public class FlagPole : MonoBehaviour
     public float speed = 6f;
     public int nextWorld = 1;
     public int nextStage = 1;
+    public GameObject winUI;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player") && other.TryGetComponent(out Player player))
         {
-            StartCoroutine(MoveTo(flag, poleBottom.position));
             StartCoroutine(LevelCompleteSequence(player));
         }
     }
@@ -23,16 +23,29 @@ public class FlagPole : MonoBehaviour
     {
         player.movement.enabled = false;
 
-        yield return MoveTo(player.transform, poleBottom.position);
-        yield return MoveTo(player.transform, player.transform.position + Vector3.right);
-        yield return MoveTo(player.transform, player.transform.position + Vector3.right + Vector3.down);
+        if (flag != null && poleBottom != null)
+        {
+            StartCoroutine(MoveTo(flag, poleBottom.position));
+        }
+
         yield return MoveTo(player.transform, castle.position);
 
         player.gameObject.SetActive(false);
 
-        yield return new WaitForSeconds(2f);
+        if (winUI != null)
+        {
+            WinUIController winController = winUI.GetComponent<WinUIController>();
+            if (winController != null)
+            {
+                winController.ConfigureNextLevel(nextWorld, nextStage);
+            }
 
-        GameManager.Instance.LoadLevel(nextWorld, nextStage);
+            winUI.SetActive(true);
+        }
+        else
+        {
+            GameManager.Instance.LoadLevel(nextWorld, nextStage);
+        }
     }
 
     private IEnumerator MoveTo(Transform subject, Vector3 position)
