@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class FlagPole : MonoBehaviour
 {
@@ -9,7 +10,8 @@ public class FlagPole : MonoBehaviour
     public float speed = 6f;
     public int nextWorld = 1;
     public int nextStage = 1;
-    public GameObject winUI;
+    public string endMenuScene = "EndMenu";
+    public float endMenuDelay = 1f;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -32,19 +34,17 @@ public class FlagPole : MonoBehaviour
 
         player.gameObject.SetActive(false);
 
-        if (winUI != null)
+        if (endMenuDelay > 0f)
         {
-            WinUIController winController = winUI.GetComponent<WinUIController>();
-            if (winController != null)
-            {
-                winController.ConfigureNextLevel(nextWorld, nextStage);
-            }
-
-            winUI.SetActive(true);
+            yield return new WaitForSeconds(endMenuDelay);
         }
-        else
+
+        int coins = GameManager.Instance != null ? GameManager.Instance.coins : 0;
+        EndMenuData.RecordVictory(coins, nextWorld, nextStage);
+
+        if (!string.IsNullOrEmpty(endMenuScene))
         {
-            GameManager.Instance.LoadLevel(nextWorld, nextStage);
+            SceneManager.LoadScene(endMenuScene);
         }
     }
 

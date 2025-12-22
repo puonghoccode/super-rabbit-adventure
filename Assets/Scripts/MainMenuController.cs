@@ -5,14 +5,19 @@ public class MainMenuController : MonoBehaviour
 {
     [SerializeField] private string levelSelectScene = "LevelSelect";
     [SerializeField] private string fallbackFirstLevelScene = "1-1";
-    [SerializeField] private string rateUrl = "https://your.store.link.here";
-    [SerializeField] private string joinUsUrl = "https://facebook.com/groups/yourgroup";
+    [SerializeField] private string rateUrl = "https://store.link";
+    [SerializeField] private string joinUsUrl = "https://facebook.com/groups/";
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private MenuClickSound clickSound;
 
     public void Play()
     {
         PlayClick();
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ResetStats();
+        }
 
         string targetScene = string.IsNullOrEmpty(levelSelectScene)
             ? fallbackFirstLevelScene
@@ -64,15 +69,6 @@ public class MainMenuController : MonoBehaviour
     {
         PlayClick();
         OpenUrl(joinUsUrl);
-    }
-
-    public void Quit()
-    {
-        PlayClick();
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
-        Application.Quit();
     }
 
     private void PlayClick()

@@ -637,8 +637,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -419.58, y: -267.5}
-  m_SizeDelta: {x: 10, y: 2}
+  m_AnchoredPosition: {x: -15.72, y: 2.17}
+  m_SizeDelta: {x: 5, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &272767219
 MonoBehaviour:
@@ -2947,11 +2947,11 @@ RectTransform:
   - {fileID: 2105185150}
   m_Father: {fileID: 1777532966}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_SizeDelta: {x: 872, y: 545.25}
+  m_Pivot: {x: 0, y: 1}
 --- !u!114 &875257717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3232,8 +3232,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -411.6, y: -270.26}
-  m_SizeDelta: {x: 10, y: 2}
+  m_AnchoredPosition: {x: -11.22, y: 0.04}
+  m_SizeDelta: {x: 5, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1086900855
 MonoBehaviour:
@@ -3368,8 +3368,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -386.93982, y: -271.3}
-  m_SizeDelta: {x: 10, y: 2}
+  m_AnchoredPosition: {x: 16.99, y: -0.83}
+  m_SizeDelta: {x: 5, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1119105897
 MonoBehaviour:
@@ -4576,8 +4576,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -428.26, y: -269.52}
-  m_SizeDelta: {x: 10, y: 2}
+  m_AnchoredPosition: {x: -24.09, y: 0.9}
+  m_SizeDelta: {x: 5, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1705370017
 MonoBehaviour:
@@ -4844,8 +4844,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 436.4, y: 273.1}
-  m_SizeDelta: {x: 872, y: 545.25}
+  m_AnchoredPosition: {x: 32, y: 2.6}
+  m_SizeDelta: {x: 74, y: 10.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1782702567
 PrefabInstance:
@@ -5165,6 +5165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 098ac3087ad868847a30edbaebb22940, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  endMenuScene: EndMenu
 --- !u!4 &1820010632
 Transform:
   m_ObjectHideFlags: 0
@@ -5214,8 +5215,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -399.61, y: -270}
-  m_SizeDelta: {x: 10, y: 2}
+  m_AnchoredPosition: {x: 2.33, y: -0.98}
+  m_SizeDelta: {x: 5, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1871788805
 MonoBehaviour:
@@ -5536,7 +5537,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1081024226980783472, guid: 43189301a9df8f642b6f5975d86bde75, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.x
-      value: 10
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 1441845288828171272, guid: 43189301a9df8f642b6f5975d86bde75, type: 3}
       propertyPath: m_Name

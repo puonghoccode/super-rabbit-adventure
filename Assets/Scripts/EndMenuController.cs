@@ -1,0 +1,188 @@
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public class EndMenuController : MonoBehaviour
+{
+    [Header("Outcome")]
+    [SerializeField] private GameObject victoryRoot;
+    [SerializeField] private GameObject gameOverRoot;
+    [SerializeField] private TMP_Text outcomeText;
+    [SerializeField] private string victoryLabel = "Victory";
+    [SerializeField] private string gameOverLabel = "Game Over";
+
+    [Header("Stats")]
+    [SerializeField] private TMP_Text coinsText;
+    [SerializeField] private Image[] starImages;
+    [SerializeField] private int oneStarCoins = 1;
+    [SerializeField] private int twoStarCoins = 5;
+    [SerializeField] private int threeStarCoins = 10;
+
+    [Header("Buttons")]
+    [SerializeField] private GameObject nextLevelButton;
+    [SerializeField] private string levelSelectScene = "LevelSelect";
+    [SerializeField] private string mainMenuScene = "MainMenu";
+    [SerializeField] private MenuClickSound clickSound;
+    [SerializeField] private bool resetStatsOnMainMenu = true;
+
+    private void Start()
+    {
+        ApplyOutcome();
+        ApplyStats();
+        ConfigureButtons();
+    }
+
+    private void ApplyOutcome()
+    {
+        bool victory = EndMenuData.Outcome == EndMenuOutcome.Victory;
+        bool gameOver = EndMenuData.Outcome == EndMenuOutcome.GameOver;
+
+        if (victoryRoot != null)
+        {
+            victoryRoot.SetActive(victory);
+        }
+
+        if (gameOverRoot != null)
+        {
+            gameOverRoot.SetActive(gameOver);
+        }
+
+        if (outcomeText != null)
+        {
+            outcomeText.text = victory ? victoryLabel : gameOverLabel;
+        }
+    }
+
+    private void ApplyStats()
+    {
+        int coins = EndMenuData.Coins;
+
+        if (coinsText != null)
+        {
+            coinsText.text = coins.ToString();
+        }
+
+        int stars = CalculateStars(coins);
+        int maxStars = GetMaxStarsForLevel();
+        stars = Mathf.Min(stars, maxStars);
+
+        if (starImages == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < starImages.Length; i++)
+        {
+            if (starImages[i] != null)
+            {
+                starImages[i].enabled = i < stars;
+            }
+        }
+    }
+
+    private void ConfigureButtons()
+    {
+        if (nextLevelButton != null)
+        {
+            nextLevelButton.SetActive(EndMenuData.HasNextLevel);
+        }
+    }
+
+    private int CalculateStars(int coins)
+    {
+        int stars = 0;
+
+        if (coins >= oneStarCoins)
+        {
+            stars = 1;
+        }
+
+        if (coins >= twoStarCoins)
+        {
+            stars = 2;
+        }
+
+        if (coins >= threeStarCoins)
+        {
+            stars = 3;
+        }
+
+        return Mathf.Clamp(stars, 0, 3);
+    }
+
+    private int GetMaxStarsForLevel()
+    {
+        int world = 0;
+        int stage = 0;
+
+        if (GameManager.Instance != null)
+        {
+            world = GameManager.Instance.world;
+            stage = GameManager.Instance.stage;
+        }
+        else
+        {
+            string[] parts = SceneManager.GetActiveScene().name.Split('-');
+            if (parts.Length == 2)
+            {
+                int.TryParse(parts[0], out world);
+                int.TryParse(parts[1], out stage);
+            }
+        }
+
+        return (world == 1 && stage == 1) ? 1 : 3;
+    }
+
+    public void NextLevel()
+    {
+        PlayClick();
+
+        if (!EndMenuData.HasNextLevel)
+        {
+            return;
+        }
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.LoadLevel(EndMenuData.NextWorld, EndMenuData.NextStage);
+        }
+        else
+        {
+            SceneManager.LoadScene($"{EndMenuData.NextWorld}-{EndMenuData.NextStage}");
+        }
+    }
+
+    public void GoToLevelSelect()
+    {
+        PlayClick();
+
+        if (!string.IsNullOrEmpty(levelSelectScene))
+        {
+            SceneManager.LoadScene(levelSelectScene);
+        }
+    }
+
+    public void GoToMainMenu()
+    {
+        PlayClick();
+
+        if (resetStatsOnMainMenu && GameManager.Instance != null)
+        {
+            GameManager.Instance.ResetStats();
+        }
+
+        if (!string.IsNullOrEmpty(mainMenuScene))
+        {
+            SceneManager.LoadScene(mainMenuScene);
+        }
+    }
+
+    private void PlayClick()
+    {
+        if (clickSound != null)
+        {
+            clickSound.Play();
+        }
+    }
+}

@@ -23,7 +23,7 @@ public class WinUIController : MonoBehaviour
             return;
         }
 
-        GameManager.Instance.LoadLevel(GameManager.Instance.world, GameManager.Instance.stage);
+        GameManager.Instance.LoadLevel(GameManager.Instance.world, GameManager.Instance.stage, true);
     }
 
     public void NextLevel()
@@ -35,7 +35,7 @@ public class WinUIController : MonoBehaviour
 
         if (hasNextLevel)
         {
-            GameManager.Instance.LoadLevel(nextWorld, nextStage);
+            GameManager.Instance.LoadLevel(nextWorld, nextStage, true);
         }
         else
         {

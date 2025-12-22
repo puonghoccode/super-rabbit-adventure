@@ -10,6 +10,10 @@ public class GameManager : MonoBehaviour
     public int stage { get; private set; } = 1;
     public int lives { get; private set; } = 3;
     public int coins { get; private set; } = 0;
+    public int maxLives => maxLivesPerLevel;
+    [SerializeField] private string endMenuScene = "EndMenu";
+    [SerializeField] private int maxLivesPerLevel = 3;
+    [SerializeField] private string gameplayUIScene = "GameplayUI";
 
     private void Awake()
     {
@@ -19,6 +23,16 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += HandleSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
     }
 
     private void OnDestroy()
@@ -36,28 +50,47 @@ public class GameManager : MonoBehaviour
 
     public void NewGame()
     {
-        lives = 3;
-        coins = 0;
+        ResetStats();
+        LoadLevel(1, 1, true);
+    }
 
-        LoadLevel(1, 1);
+    public void ResetStats()
+    {
+        lives = maxLivesPerLevel;
+        coins = 0;
     }
 
     public void GameOver()
     {
-        NewGame();
+        EndMenuData.RecordGameOver(coins);
+
+        if (!string.IsNullOrEmpty(endMenuScene))
+        {
+            SceneManager.LoadScene(endMenuScene);
+        }
     }
 
     public void LoadLevel(int world, int stage)
     {
+        LoadLevel(world, stage, world != this.world || stage != this.stage);
+    }
+
+    public void LoadLevel(int world, int stage, bool resetLives)
+    {
         this.world = world;
         this.stage = stage;
+
+        if (resetLives)
+        {
+            lives = maxLivesPerLevel;
+        }
 
         SceneManager.LoadScene($"{world}-{stage}");
     }
 
     public void NextLevel()
     {
-        LoadLevel(world, stage + 1);
+        LoadLevel(world, stage + 1, true);
     }
 
     public void ResetLevel(float delay)
@@ -71,7 +104,7 @@ public class GameManager : MonoBehaviour
         lives--;
 
         if (lives > 0) {
-            LoadLevel(world, stage);
+            LoadLevel(world, stage, false);
         } else {
             GameOver();
         }
@@ -90,7 +123,74 @@ public class GameManager : MonoBehaviour
 
     public void AddLife()
     {
-        lives++;
+        lives = Mathf.Min(lives + 1, maxLivesPerLevel);
+    }
+
+    private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == gameplayUIScene)
+        {
+            return;
+        }
+
+        Scene activeScene = SceneManager.GetActiveScene();
+        if (activeScene.name == gameplayUIScene)
+        {
+            return;
+        }
+
+        if (IsGameplayScene(activeScene.name))
+        {
+            LoadGameplayUI();
+        }
+        else
+        {
+            UnloadGameplayUI();
+        }
+    }
+
+    private void LoadGameplayUI()
+    {
+        if (string.IsNullOrEmpty(gameplayUIScene))
+        {
+            return;
+        }
+
+        Scene uiScene = SceneManager.GetSceneByName(gameplayUIScene);
+        if (!uiScene.isLoaded)
+        {
+            SceneManager.LoadSceneAsync(gameplayUIScene, LoadSceneMode.Additive);
+        }
+    }
+
+    private void UnloadGameplayUI()
+    {
+        if (string.IsNullOrEmpty(gameplayUIScene))
+        {
+            return;
+        }
+
+        Scene uiScene = SceneManager.GetSceneByName(gameplayUIScene);
+        if (uiScene.isLoaded)
+        {
+            SceneManager.UnloadSceneAsync(gameplayUIScene);
+        }
+    }
+
+    private bool IsGameplayScene(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            return false;
+        }
+
+        string[] parts = sceneName.Split('-');
+        if (parts.Length != 2)
+        {
+            return false;
+        }
+
+        return int.TryParse(parts[0], out _) && int.TryParse(parts[1], out _);
     }
 
 }
