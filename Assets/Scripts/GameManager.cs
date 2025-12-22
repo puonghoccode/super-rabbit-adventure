@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string endMenuScene = "EndMenu";
     [SerializeField] private int maxLivesPerLevel = 3;
     [SerializeField] private string gameplayUIScene = "GameplayUI";
+    [SerializeField] private bool useLoadingScene = true;
+    [SerializeField] private string loadingScene = "Loading";
 
     private void Awake()
     {
@@ -85,7 +87,19 @@ public class GameManager : MonoBehaviour
             lives = maxLivesPerLevel;
         }
 
-        SceneManager.LoadScene($"{world}-{stage}");
+        string targetScene = $"{world}-{stage}";
+
+        if (useLoadingScene && !string.IsNullOrEmpty(loadingScene))
+        {
+            if (SceneManager.GetActiveScene().name != loadingScene)
+            {
+                LoadingScreenData.SetTarget(targetScene);
+                SceneManager.LoadScene(loadingScene);
+                return;
+            }
+        }
+
+        SceneManager.LoadScene(targetScene);
     }
 
     public void NextLevel()

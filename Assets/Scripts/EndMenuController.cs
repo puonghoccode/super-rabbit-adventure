@@ -8,9 +8,6 @@ public class EndMenuController : MonoBehaviour
     [Header("Outcome")]
     [SerializeField] private GameObject victoryRoot;
     [SerializeField] private GameObject gameOverRoot;
-    [SerializeField] private TMP_Text outcomeText;
-    [SerializeField] private string victoryLabel = "Victory";
-    [SerializeField] private string gameOverLabel = "Game Over";
 
     [Header("Stats")]
     [SerializeField] private TMP_Text coinsText;
@@ -29,8 +26,13 @@ public class EndMenuController : MonoBehaviour
     private void Start()
     {
         ApplyOutcome();
-        ApplyStats();
+        int earnedStars = ApplyStats();
         ConfigureButtons();
+
+        if (EndMenuData.Outcome == EndMenuOutcome.Victory)
+        {
+            RecordProgress(earnedStars);
+        }
     }
 
     private void ApplyOutcome()
@@ -47,14 +49,9 @@ public class EndMenuController : MonoBehaviour
         {
             gameOverRoot.SetActive(gameOver);
         }
-
-        if (outcomeText != null)
-        {
-            outcomeText.text = victory ? victoryLabel : gameOverLabel;
-        }
     }
 
-    private void ApplyStats()
+    private int ApplyStats()
     {
         int coins = EndMenuData.Coins;
 
@@ -69,7 +66,7 @@ public class EndMenuController : MonoBehaviour
 
         if (starImages == null)
         {
-            return;
+            return stars;
         }
 
         for (int i = 0; i < starImages.Length; i++)
@@ -79,6 +76,8 @@ public class EndMenuController : MonoBehaviour
                 starImages[i].enabled = i < stars;
             }
         }
+
+        return stars;
     }
 
     private void ConfigureButtons()
@@ -113,25 +112,42 @@ public class EndMenuController : MonoBehaviour
 
     private int GetMaxStarsForLevel()
     {
-        int world = 0;
-        int stage = 0;
+        if (TryGetCurrentLevel(out int world, out int stage))
+        {
+            return LevelProgress.GetMaxStars(world, stage);
+        }
+
+        return 3;
+    }
+
+    private void RecordProgress(int stars)
+    {
+        if (TryGetCurrentLevel(out int world, out int stage))
+        {
+            LevelProgress.RecordCompletion(world, stage, stars);
+        }
+    }
+
+    private bool TryGetCurrentLevel(out int world, out int stage)
+    {
+        world = EndMenuData.CurrentWorld;
+        stage = EndMenuData.CurrentStage;
+
+        if (world > 0 && stage > 0)
+        {
+            return true;
+        }
 
         if (GameManager.Instance != null)
         {
             world = GameManager.Instance.world;
             stage = GameManager.Instance.stage;
-        }
-        else
-        {
-            string[] parts = SceneManager.GetActiveScene().name.Split('-');
-            if (parts.Length == 2)
-            {
-                int.TryParse(parts[0], out world);
-                int.TryParse(parts[1], out stage);
-            }
+            return true;
         }
 
-        return (world == 1 && stage == 1) ? 1 : 3;
+        world = 0;
+        stage = 0;
+        return false;
     }
 
     public void NextLevel()

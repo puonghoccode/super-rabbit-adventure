@@ -9,14 +9,18 @@ public static class EndMenuData
 {
     public static EndMenuOutcome Outcome { get; private set; } = EndMenuOutcome.None;
     public static int Coins { get; private set; }
+    public static int CurrentWorld { get; private set; }
+    public static int CurrentStage { get; private set; }
     public static int NextWorld { get; private set; }
     public static int NextStage { get; private set; }
     public static bool HasNextLevel { get; private set; }
 
-    public static void RecordVictory(int coins, int nextWorld, int nextStage)
+    public static void RecordVictory(int coins, int currentWorld, int currentStage, int nextWorld, int nextStage)
     {
         Outcome = EndMenuOutcome.Victory;
         Coins = coins;
+        CurrentWorld = currentWorld;
+        CurrentStage = currentStage;
         NextWorld = nextWorld;
         NextStage = nextStage;
         HasNextLevel = true;
@@ -26,6 +30,8 @@ public static class EndMenuData
     {
         Outcome = EndMenuOutcome.GameOver;
         Coins = coins;
+        CurrentWorld = 0;
+        CurrentStage = 0;
         HasNextLevel = false;
     }
 
@@ -33,6 +39,8 @@ public static class EndMenuData
     {
         Outcome = EndMenuOutcome.None;
         Coins = 0;
+        CurrentWorld = 0;
+        CurrentStage = 0;
         NextWorld = 0;
         NextStage = 0;
         HasNextLevel = false;

@@ -9,12 +9,22 @@ public class GameplayUIController : MonoBehaviour
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private TMP_Text coinsText;
     [SerializeField] private TMP_Text livesText;
+    [SerializeField] private Image[] lifeImages;
+    [SerializeField] private Sprite lifeOnSprite;
+    [SerializeField] private Sprite lifeOffSprite;
     [SerializeField] private Image[] starImages;
+    [SerializeField] private Sprite starOnSprite;
+    [SerializeField] private Color starOnColor = Color.white;
+    [SerializeField] private Color starOffColor = new Color(0.5f, 0.5f, 0.5f, 1f);
     [SerializeField] private Button pauseButton;
     [SerializeField] private MenuClickSound clickSound;
 
     [Header("Timing")]
     [SerializeField] private float levelDurationSeconds = 300f;
+    [Header("Stars")]
+    [SerializeField] private int oneStarCoins = 1;
+    [SerializeField] private int twoStarCoins = 5;
+    [SerializeField] private int threeStarCoins = 10;
 
     private float remainingTime;
     private bool timeExpired;
@@ -23,6 +33,16 @@ public class GameplayUIController : MonoBehaviour
     {
         ResetForLevel();
         HookPauseButton();
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += HandleSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
     }
 
     private void Update()
@@ -35,7 +55,8 @@ public class GameplayUIController : MonoBehaviour
     {
         remainingTime = Mathf.Max(0f, levelDurationSeconds);
         timeExpired = false;
-        UpdateStarsMax();
+        UpdateLifeIcons();
+        UpdateStarIcons();
         UpdateTimeText();
     }
 
@@ -66,6 +87,9 @@ public class GameplayUIController : MonoBehaviour
             return;
         }
 
+        UpdateLifeIcons();
+        UpdateStarIcons();
+
         if (coinsText != null)
         {
             coinsText.text = GameManager.Instance.coins.ToString();
@@ -91,21 +115,94 @@ public class GameplayUIController : MonoBehaviour
         timeText.text = $"{minutes:00}:{seconds:00}";
     }
 
-    private void UpdateStarsMax()
+    private void UpdateLifeIcons()
     {
-        int maxStars = GetMaxStarsForLevel();
-
-        if (starImages == null)
+        if (GameManager.Instance == null)
         {
             return;
         }
 
+        int lives = GameManager.Instance.lives;
+        int maxLives = GameManager.Instance.maxLives;
+        UpdateIcons(lifeImages, lives, maxLives, lifeOnSprite, lifeOffSprite);
+    }
+
+    private void UpdateStarIcons()
+    {
+        if (GameManager.Instance == null)
+        {
+            return;
+        }
+
+        int maxStars = GetMaxStarsForLevel();
+        int stars = CalculateStars(GameManager.Instance.coins);
+        stars = Mathf.Min(stars, maxStars);
+        UpdateStarIcons(stars, maxStars);
+    }
+
+    private void UpdateIcons(Image[] images, int filled, int maxVisible, Sprite onSprite, Sprite offSprite)
+    {
+        if (images == null || images.Length == 0)
+        {
+            return;
+        }
+
+        int visibleCount = maxVisible > 0 ? Mathf.Min(images.Length, maxVisible) : images.Length;
+
+        for (int i = 0; i < images.Length; i++)
+        {
+            Image image = images[i];
+            if (image == null)
+            {
+                continue;
+            }
+
+            bool isVisible = i < visibleCount;
+            image.gameObject.SetActive(isVisible);
+
+            if (!isVisible)
+            {
+                continue;
+            }
+
+            if (onSprite != null && offSprite != null)
+            {
+                image.sprite = i < filled ? onSprite : offSprite;
+            }
+        }
+    }
+
+    private void UpdateStarIcons(int filled, int maxVisible)
+    {
+        if (starImages == null || starImages.Length == 0)
+        {
+            return;
+        }
+
+        int visibleCount = maxVisible > 0 ? Mathf.Min(starImages.Length, maxVisible) : starImages.Length;
+
         for (int i = 0; i < starImages.Length; i++)
         {
-            if (starImages[i] != null)
+            Image image = starImages[i];
+            if (image == null)
             {
-                starImages[i].gameObject.SetActive(i < maxStars);
+                continue;
             }
+
+            bool isVisible = i < visibleCount;
+            image.gameObject.SetActive(isVisible);
+
+            if (!isVisible)
+            {
+                continue;
+            }
+
+            if (starOnSprite != null)
+            {
+                image.sprite = starOnSprite;
+            }
+
+            image.color = i < filled ? starOnColor : starOffColor;
         }
     }
 
@@ -129,7 +226,29 @@ public class GameplayUIController : MonoBehaviour
             }
         }
 
-        return (world == 1 && stage == 1) ? 1 : 3;
+        return LevelProgress.GetMaxStars(world, stage);
+    }
+
+    private int CalculateStars(int coins)
+    {
+        int stars = 0;
+
+        if (coins >= oneStarCoins)
+        {
+            stars = 1;
+        }
+
+        if (coins >= twoStarCoins)
+        {
+            stars = 2;
+        }
+
+        if (coins >= threeStarCoins)
+        {
+            stars = 3;
+        }
+
+        return Mathf.Clamp(stars, 0, 3);
     }
 
     private void HookPauseButton()
@@ -159,5 +278,29 @@ public class GameplayUIController : MonoBehaviour
         {
             clickSound.Play();
         }
+    }
+
+    private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (IsGameplayScene(scene.name))
+        {
+            ResetForLevel();
+        }
+    }
+
+    private bool IsGameplayScene(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            return false;
+        }
+
+        string[] parts = sceneName.Split('-');
+        if (parts.Length != 2)
+        {
+            return false;
+        }
+
+        return int.TryParse(parts[0], out _) && int.TryParse(parts[1], out _);
     }
 }

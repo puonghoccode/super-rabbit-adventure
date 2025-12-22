@@ -40,7 +40,25 @@ public class FlagPole : MonoBehaviour
         }
 
         int coins = GameManager.Instance != null ? GameManager.Instance.coins : 0;
-        EndMenuData.RecordVictory(coins, nextWorld, nextStage);
+        int currentWorld = 0;
+        int currentStage = 0;
+
+        if (GameManager.Instance != null)
+        {
+            currentWorld = GameManager.Instance.world;
+            currentStage = GameManager.Instance.stage;
+        }
+        else
+        {
+            string[] parts = SceneManager.GetActiveScene().name.Split('-');
+            if (parts.Length == 2)
+            {
+                int.TryParse(parts[0], out currentWorld);
+                int.TryParse(parts[1], out currentStage);
+            }
+        }
+
+        EndMenuData.RecordVictory(coins, currentWorld, currentStage, nextWorld, nextStage);
 
         if (!string.IsNullOrEmpty(endMenuScene))
         {
