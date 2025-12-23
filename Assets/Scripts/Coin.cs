@@ -14,6 +14,8 @@ public class Coin : MonoBehaviour
 
         collected = true;
         GameManager.Instance?.AddCoin();
+        PlayerWallet.AddCoins(1);
+        GameplaySfxPlayer.Get()?.PlayCoin();
 
         // Disable visuals and collisions immediately to avoid double pickups.
         var collider = GetComponent<Collider2D>();

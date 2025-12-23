@@ -16,6 +16,8 @@ public class Player : MonoBehaviour
     public bool big => bigRenderer != null && bigRenderer.isActiveAndEnabled;
     public bool dead => deathAnimation.enabled;
     public bool jellypower { get; private set; }
+    private bool invincible;
+    private Coroutine invincibilityRoutine;
 
     private void Awake()
     {
@@ -50,8 +52,14 @@ public class Player : MonoBehaviour
 
     public void Hit()
     {
+        if (invincible)
+        {
+            return;
+        }
+
         if (!dead && !jellypower)
         {
+            GameplaySfxPlayer.Get()?.PlayHurt();
             if (big) {
                 Shrink();
             } else {
@@ -66,7 +74,31 @@ public class Player : MonoBehaviour
         bigRenderer.enabled = false;
         deathAnimation.enabled = true;
 
+        GameManager.Instance?.RegisterDeath(false, transform.position);
         GameManager.Instance.ResetLevel(3f);
+    }
+
+    public void Revive(Vector3 position, float invincibilitySeconds)
+    {
+        transform.position = position;
+
+        if (deathAnimation != null)
+        {
+            deathAnimation.enabled = false;
+        }
+
+        if (movement != null)
+        {
+            movement.enabled = true;
+        }
+
+        if (capsuleCollider != null)
+        {
+            capsuleCollider.enabled = true;
+        }
+
+        SetSmallImmediate();
+        ActivateInvincibility(invincibilitySeconds);
     }
 
     public void Grow()
@@ -174,6 +206,36 @@ public class Player : MonoBehaviour
     public void JellyPower()
     {
         StartCoroutine(JellyPowerAnimation());
+    }
+
+    public void ActivateInvincibility(float duration)
+    {
+        if (duration <= 0f)
+        {
+            return;
+        }
+
+        if (invincibilityRoutine != null)
+        {
+            StopCoroutine(invincibilityRoutine);
+        }
+
+        invincibilityRoutine = StartCoroutine(Invincibility(duration));
+    }
+
+    private IEnumerator Invincibility(float duration)
+    {
+        invincible = true;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        invincible = false;
+        invincibilityRoutine = null;
     }
 
     private IEnumerator JellyPowerAnimation()

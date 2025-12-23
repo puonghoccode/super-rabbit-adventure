@@ -49,10 +49,8 @@ public class LevelSelectController : MonoBehaviour
             return;
         }
 
-        if (clickSound != null)
-        {
-            clickSound.Play();
-        }
+        MenuClickSound sound = clickSound != null ? clickSound : MenuClickSound.Get();
+        sound?.Play();
 
         if (GameManager.Instance != null)
         {

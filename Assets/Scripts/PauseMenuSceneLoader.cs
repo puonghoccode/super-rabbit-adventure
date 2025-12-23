@@ -5,7 +5,7 @@ public class PauseMenuSceneLoader : MonoBehaviour
 {
     public static PauseMenuSceneLoader Active { get; private set; }
 
-    [SerializeField] private string pauseMenuScene = "PauseMenu";
+    [SerializeField] private string pauseMenuScene = "PauseScene";
     [SerializeField] private bool pauseTimeOnOpen = true;
 
     private float previousTimeScale = 1f;

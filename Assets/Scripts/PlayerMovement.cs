@@ -102,6 +102,7 @@ public class PlayerMovement : MonoBehaviour
         // Perform jump
         if (Input.GetButtonDown("Jump"))
         {
+            GameplaySfxPlayer.Get()?.PlayJump();
             velocity.y = jumpForce;
             jumping = true;
         }

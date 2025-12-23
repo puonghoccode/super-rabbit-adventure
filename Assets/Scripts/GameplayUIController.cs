@@ -21,10 +21,6 @@ public class GameplayUIController : MonoBehaviour
 
     [Header("Timing")]
     [SerializeField] private float levelDurationSeconds = 300f;
-    [Header("Stars")]
-    [SerializeField] private int oneStarCoins = 1;
-    [SerializeField] private int twoStarCoins = 5;
-    [SerializeField] private int threeStarCoins = 10;
 
     private float remainingTime;
     private bool timeExpired;
@@ -135,7 +131,7 @@ public class GameplayUIController : MonoBehaviour
         }
 
         int maxStars = GetMaxStarsForLevel();
-        int stars = CalculateStars(GameManager.Instance.coins);
+        int stars = GameManager.Instance.stars;
         stars = Mathf.Min(stars, maxStars);
         UpdateStarIcons(stars, maxStars);
     }
@@ -180,6 +176,7 @@ public class GameplayUIController : MonoBehaviour
         }
 
         int visibleCount = maxVisible > 0 ? Mathf.Min(starImages.Length, maxVisible) : starImages.Length;
+        int showCount = Mathf.Min(filled, visibleCount);
 
         for (int i = 0; i < starImages.Length; i++)
         {
@@ -189,9 +186,8 @@ public class GameplayUIController : MonoBehaviour
                 continue;
             }
 
-            bool isVisible = i < visibleCount;
+            bool isVisible = i < showCount;
             image.gameObject.SetActive(isVisible);
-
             if (!isVisible)
             {
                 continue;
@@ -202,7 +198,7 @@ public class GameplayUIController : MonoBehaviour
                 image.sprite = starOnSprite;
             }
 
-            image.color = i < filled ? starOnColor : starOffColor;
+            image.color = starOnColor;
         }
     }
 
@@ -229,28 +225,6 @@ public class GameplayUIController : MonoBehaviour
         return LevelProgress.GetMaxStars(world, stage);
     }
 
-    private int CalculateStars(int coins)
-    {
-        int stars = 0;
-
-        if (coins >= oneStarCoins)
-        {
-            stars = 1;
-        }
-
-        if (coins >= twoStarCoins)
-        {
-            stars = 2;
-        }
-
-        if (coins >= threeStarCoins)
-        {
-            stars = 3;
-        }
-
-        return Mathf.Clamp(stars, 0, 3);
-    }
-
     private void HookPauseButton()
     {
         if (pauseButton == null)
@@ -274,10 +248,8 @@ public class GameplayUIController : MonoBehaviour
 
     private void PlayClick()
     {
-        if (clickSound != null)
-        {
-            clickSound.Play();
-        }
+        MenuClickSound sound = clickSound != null ? clickSound : MenuClickSound.Get();
+        sound?.Play();
     }
 
     private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)

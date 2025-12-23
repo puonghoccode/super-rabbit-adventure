@@ -40,6 +40,7 @@ public class FlagPole : MonoBehaviour
         }
 
         int coins = GameManager.Instance != null ? GameManager.Instance.coins : 0;
+        int stars = GameManager.Instance != null ? GameManager.Instance.stars : 0;
         int currentWorld = 0;
         int currentStage = 0;
 
@@ -58,7 +59,7 @@ public class FlagPole : MonoBehaviour
             }
         }
 
-        EndMenuData.RecordVictory(coins, currentWorld, currentStage, nextWorld, nextStage);
+        EndMenuData.RecordVictory(coins, stars, currentWorld, currentStage, nextWorld, nextStage);
 
         if (!string.IsNullOrEmpty(endMenuScene))
         {

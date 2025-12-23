@@ -14,9 +14,6 @@ public class PauseMenuStatusUI : MonoBehaviour
     [SerializeField] private Sprite starOnSprite;
     [SerializeField] private Color starOnColor = Color.white;
     [SerializeField] private Color starOffColor = new Color(0.5f, 0.5f, 0.5f, 1f);
-    [SerializeField] private int oneStarCoins = 1;
-    [SerializeField] private int twoStarCoins = 5;
-    [SerializeField] private int threeStarCoins = 10;
 
     private void OnEnable()
     {
@@ -29,8 +26,7 @@ public class PauseMenuStatusUI : MonoBehaviour
         int maxLives = GameManager.Instance != null ? GameManager.Instance.maxLives : lifeImages.Length;
         UpdateLives(lives, maxLives);
 
-        int coins = GameManager.Instance != null ? GameManager.Instance.coins : 0;
-        int stars = CalculateStars(coins);
+        int stars = GameManager.Instance != null ? GameManager.Instance.stars : 0;
         int maxStars = GetMaxStarsForLevel();
         stars = Mathf.Min(stars, maxStars);
         UpdateStars(stars, maxStars);
@@ -100,28 +96,6 @@ public class PauseMenuStatusUI : MonoBehaviour
 
             image.color = i < filled ? starOnColor : starOffColor;
         }
-    }
-
-    private int CalculateStars(int coins)
-    {
-        int stars = 0;
-
-        if (coins >= oneStarCoins)
-        {
-            stars = 1;
-        }
-
-        if (coins >= twoStarCoins)
-        {
-            stars = 2;
-        }
-
-        if (coins >= threeStarCoins)
-        {
-            stars = 3;
-        }
-
-        return Mathf.Clamp(stars, 0, 3);
     }
 
     private int GetMaxStarsForLevel()

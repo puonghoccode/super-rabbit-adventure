@@ -12,9 +12,6 @@ public class EndMenuController : MonoBehaviour
     [Header("Stats")]
     [SerializeField] private TMP_Text coinsText;
     [SerializeField] private Image[] starImages;
-    [SerializeField] private int oneStarCoins = 1;
-    [SerializeField] private int twoStarCoins = 5;
-    [SerializeField] private int threeStarCoins = 10;
 
     [Header("Buttons")]
     [SerializeField] private GameObject nextLevelButton;
@@ -60,7 +57,7 @@ public class EndMenuController : MonoBehaviour
             coinsText.text = coins.ToString();
         }
 
-        int stars = CalculateStars(coins);
+        int stars = EndMenuData.Stars;
         int maxStars = GetMaxStarsForLevel();
         stars = Mathf.Min(stars, maxStars);
 
@@ -86,28 +83,6 @@ public class EndMenuController : MonoBehaviour
         {
             nextLevelButton.SetActive(EndMenuData.HasNextLevel);
         }
-    }
-
-    private int CalculateStars(int coins)
-    {
-        int stars = 0;
-
-        if (coins >= oneStarCoins)
-        {
-            stars = 1;
-        }
-
-        if (coins >= twoStarCoins)
-        {
-            stars = 2;
-        }
-
-        if (coins >= threeStarCoins)
-        {
-            stars = 3;
-        }
-
-        return Mathf.Clamp(stars, 0, 3);
     }
 
     private int GetMaxStarsForLevel()
@@ -196,9 +171,7 @@ public class EndMenuController : MonoBehaviour
 
     private void PlayClick()
     {
-        if (clickSound != null)
-        {
-            clickSound.Play();
-        }
+        MenuClickSound sound = clickSound != null ? clickSound : MenuClickSound.Get();
+        sound?.Play();
     }
 }

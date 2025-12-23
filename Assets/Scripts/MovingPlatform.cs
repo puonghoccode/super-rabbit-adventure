@@ -4,38 +4,83 @@ public class MovingPlatform : MonoBehaviour
 {
     public float speed = 2f;
     public Transform[] points;
-    private  int i;
-    void Start()
+    private int i;
+    private Rigidbody2D rb;
+    private Vector2 platformDelta;
+
+    private void Awake()
     {
-        transform.position = points[0].position;
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    private void Start()
     {
-        if(Vector2.Distance(transform.position, points[i].position) < 0.1f)
+        if (points == null || points.Length == 0)
         {
-            i++;
-            if(i == points.Length)
+            return;
+        }
+
+        Vector2 startPosition = points[0].position;
+        if (rb != null)
+        {
+            rb.position = startPosition;
+        }
+        else
+        {
+            transform.position = startPosition;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (points == null || points.Length == 0)
+        {
+            platformDelta = Vector2.zero;
+            return;
+        }
+
+        Vector2 current = rb != null ? rb.position : (Vector2)transform.position;
+        if (Vector2.Distance(current, points[i].position) < 0.1f)
+        {
+            i = (i + 1) % points.Length;
+        }
+
+        Vector2 next = Vector2.MoveTowards(current, points[i].position, speed * Time.fixedDeltaTime);
+        platformDelta = next - current;
+
+        if (rb != null && rb.bodyType != RigidbodyType2D.Static)
+        {
+            rb.MovePosition(next);
+        }
+        else
+        {
+            transform.position = next;
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            if (platformDelta == Vector2.zero)
             {
-                i = 0;
+                return;
             }
-        }
 
-        transform.position = Vector2.MoveTowards(transform.position, points[i].position, speed * Time.deltaTime);
-    }
+            if (!collision.transform.DotTest(transform, Vector2.down))
+            {
+                return;
+            }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            collision.collider.transform.SetParent(transform);
-        }
-    }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            collision.collider.transform.SetParent(null);
+            Rigidbody2D playerRb = collision.rigidbody;
+            if (playerRb != null && !playerRb.isKinematic)
+            {
+                playerRb.MovePosition(playerRb.position + platformDelta);
+            }
+            else
+            {
+                collision.transform.position += (Vector3)platformDelta;
+            }
         }
     }
 }

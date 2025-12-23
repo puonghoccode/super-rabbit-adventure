@@ -99,10 +99,8 @@ public class PauseMenuController : MonoBehaviour
 
     private void PlayClick()
     {
-        if (clickSound != null)
-        {
-            clickSound.Play();
-        }
+        MenuClickSound sound = clickSound != null ? clickSound : MenuClickSound.Get();
+        sound?.Play();
     }
 
     private void ClosePauseMenu()

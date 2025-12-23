@@ -2,12 +2,37 @@ using UnityEngine;
 
 public class MenuClickSound : MonoBehaviour
 {
+    public static MenuClickSound Active { get; private set; }
+
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip clickClip;
 
     private void Reset()
     {
         audioSource = GetComponent<AudioSource>();
+    }
+
+    private void OnEnable()
+    {
+        Active = this;
+    }
+
+    private void OnDisable()
+    {
+        if (Active == this)
+        {
+            Active = null;
+        }
+    }
+
+    public static MenuClickSound Get()
+    {
+        if (Active == null)
+        {
+            Active = FindObjectOfType<MenuClickSound>();
+        }
+
+        return Active;
     }
 
     public void Play()

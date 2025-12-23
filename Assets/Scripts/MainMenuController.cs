@@ -9,6 +9,21 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private string joinUsUrl = "https://facebook.com/groups/";
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private MenuClickSound clickSound;
+    [SerializeField] private bool forceBgmOn = true;
+    [SerializeField] private bool forceClickOn = true;
+
+    private void Start()
+    {
+        if (forceBgmOn)
+        {
+            GameAudioSettings.SetBgmEnabled(true);
+        }
+
+        if (forceClickOn)
+        {
+            GameAudioSettings.SetClickEnabled(true);
+        }
+    }
 
     public void Play()
     {
@@ -23,7 +38,12 @@ public class MainMenuController : MonoBehaviour
             ? fallbackFirstLevelScene
             : levelSelectScene;
 
-        if (!string.IsNullOrEmpty(targetScene))
+        if (!CanLoadScene(targetScene))
+        {
+            targetScene = fallbackFirstLevelScene;
+        }
+
+        if (CanLoadScene(targetScene))
         {
             SceneManager.LoadScene(targetScene);
         }
@@ -73,10 +93,8 @@ public class MainMenuController : MonoBehaviour
 
     private void PlayClick()
     {
-        if (clickSound != null)
-        {
-            clickSound.Play();
-        }
+        MenuClickSound sound = clickSound != null ? clickSound : MenuClickSound.Get();
+        sound?.Play();
     }
 
     private void OpenUrl(string url)
@@ -87,5 +105,10 @@ public class MainMenuController : MonoBehaviour
         }
 
         Application.OpenURL(url);
+    }
+
+    private bool CanLoadScene(string sceneName)
+    {
+        return !string.IsNullOrEmpty(sceneName) && Application.CanStreamedLevelBeLoaded(sceneName);
     }
 }

@@ -7,8 +7,9 @@ public class DeathBarrier : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            GameManager.Instance?.RegisterDeath(true, other.transform.position);
             other.gameObject.SetActive(false);
-            GameManager.Instance.ResetLevel(3f);
+            GameManager.Instance?.GameOver();
         }
         else
         {

@@ -10,12 +10,21 @@ public class GameManager : MonoBehaviour
     public int stage { get; private set; } = 1;
     public int lives { get; private set; } = 3;
     public int coins { get; private set; } = 0;
+    public int stars { get; private set; } = 0;
     public int maxLives => maxLivesPerLevel;
     [SerializeField] private string endMenuScene = "EndMenu";
-    [SerializeField] private int maxLivesPerLevel = 3;
+    [SerializeField] private int maxLivesPerLevel = 1;
     [SerializeField] private string gameplayUIScene = "GameplayUI";
-    [SerializeField] private bool useLoadingScene = true;
+    [SerializeField] private bool useLoadingScene = false;
     [SerializeField] private string loadingScene = "Loading";
+    [SerializeField] private bool allowContinue = true;
+    [SerializeField] private string continueScene = "ContinueScene";
+    [SerializeField] private float continueInvincibilitySeconds = 5f;
+
+    private bool lastDeathWasFall;
+    private Vector3 lastDeathPosition;
+    private bool continueOpen;
+    private float previousTimeScale = 1f;
 
     private void Awake()
     {
@@ -60,11 +69,12 @@ public class GameManager : MonoBehaviour
     {
         lives = maxLivesPerLevel;
         coins = 0;
+        stars = 0;
     }
 
     public void GameOver()
     {
-        EndMenuData.RecordGameOver(coins);
+        EndMenuData.RecordGameOver(coins, stars);
 
         if (!string.IsNullOrEmpty(endMenuScene))
         {
@@ -85,6 +95,8 @@ public class GameManager : MonoBehaviour
         if (resetLives)
         {
             lives = maxLivesPerLevel;
+            coins = 0;
+            stars = 0;
         }
 
         string targetScene = $"{world}-{stage}";
@@ -115,10 +127,8 @@ public class GameManager : MonoBehaviour
 
     public void ResetLevel()
     {
-        lives--;
-
-        if (lives > 0) {
-            LoadLevel(world, stage, false);
+        if (allowContinue && !lastDeathWasFall) {
+            OpenContinueMenu();
         } else {
             GameOver();
         }
@@ -127,17 +137,59 @@ public class GameManager : MonoBehaviour
     public void AddCoin()
     {
         coins++;
+    }
 
-        if (coins == 100)
-        {
-            coins = 0;
-            AddLife();
-        }
+    public void AddStar()
+    {
+        int maxStars = LevelProgress.GetMaxStars(world, stage);
+        stars = Mathf.Clamp(stars + 1, 0, maxStars);
     }
 
     public void AddLife()
     {
         lives = Mathf.Min(lives + 1, maxLivesPerLevel);
+    }
+
+    public void RegisterDeath(bool isFallDeath, Vector3 deathPosition)
+    {
+        lastDeathWasFall = isFallDeath;
+        lastDeathPosition = deathPosition;
+    }
+
+    public bool TryContinueWithCoins(int cost)
+    {
+        if (!continueOpen)
+        {
+            return false;
+        }
+
+        if (!PlayerWallet.TrySpendCoins(cost))
+        {
+            return false;
+        }
+
+        ContinueFromPurchase();
+        return true;
+    }
+
+    public void ContinueWithAd()
+    {
+        if (!continueOpen)
+        {
+            return;
+        }
+
+        ContinueFromPurchase();
+    }
+
+    public void SkipContinue()
+    {
+        if (continueOpen)
+        {
+            CloseContinueMenu();
+        }
+
+        GameOver();
     }
 
     private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -205,6 +257,70 @@ public class GameManager : MonoBehaviour
         }
 
         return int.TryParse(parts[0], out _) && int.TryParse(parts[1], out _);
+    }
+
+    private void OpenContinueMenu()
+    {
+        if (continueOpen)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(continueScene))
+        {
+            GameOver();
+            return;
+        }
+
+        previousTimeScale = Time.timeScale;
+        Time.timeScale = 0f;
+        SceneManager.LoadSceneAsync(continueScene, LoadSceneMode.Additive);
+        continueOpen = true;
+    }
+
+    private void CloseContinueMenu()
+    {
+        if (!continueOpen)
+        {
+            return;
+        }
+
+        Time.timeScale = previousTimeScale;
+
+        if (!string.IsNullOrEmpty(continueScene))
+        {
+            Scene scene = SceneManager.GetSceneByName(continueScene);
+            if (scene.isLoaded)
+            {
+                SceneManager.UnloadSceneAsync(continueScene);
+            }
+        }
+
+        continueOpen = false;
+    }
+
+    private void ContinueFromPurchase()
+    {
+        lives = 1;
+
+        CloseContinueMenu();
+        RespawnPlayer(lastDeathPosition, continueInvincibilitySeconds);
+    }
+
+    private void RespawnPlayer(Vector3 position, float invincibilitySeconds)
+    {
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject == null)
+        {
+            return;
+        }
+
+        playerObject.transform.position = position;
+
+        if (playerObject.TryGetComponent(out Player player))
+        {
+            player.Revive(position, invincibilitySeconds);
+        }
     }
 
 }

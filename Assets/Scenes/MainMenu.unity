@@ -2677,6 +2677,8 @@ MonoBehaviour:
   joinUsUrl: https://facebook.com/groups/yourgroup
   settingsPanel: {fileID: 1411251675}
   clickSound: {fileID: 1030107642}
+  forceBgmOn: 1
+  forceClickOn: 1
 --- !u!1 &1703097405
 GameObject:
   m_ObjectHideFlags: 0

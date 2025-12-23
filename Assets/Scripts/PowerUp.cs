@@ -5,7 +5,7 @@ public class PowerUp : MonoBehaviour
     public enum Type
     {
         Coin,
-        ExtraLife,
+        Star,
         MagicPotion,
         JellyPower,
     }
@@ -25,10 +25,13 @@ public class PowerUp : MonoBehaviour
         {
             case Type.Coin:
                 GameManager.Instance.AddCoin();
+                PlayerWallet.AddCoins(1);
+                GameplaySfxPlayer.Get()?.PlayCoin();
                 break;
 
-            case Type.ExtraLife:
-                GameManager.Instance.AddLife();
+            case Type.Star:
+                GameManager.Instance?.AddStar();
+                GameplaySfxPlayer.Get()?.PlayStar();
                 break;
 
             case Type.MagicPotion:
