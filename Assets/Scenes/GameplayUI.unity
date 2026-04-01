@@ -209,7 +209,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &121941747
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1586,7 +1586,7 @@ RectTransform:
   m_GameObject: {fileID: 1261088908}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 869403867}
@@ -1629,9 +1629,6 @@ MonoBehaviour:
   pauseButton: {fileID: 869403868}
   clickSound: {fileID: 1417053114}
   levelDurationSeconds: 300
-  oneStarCoins: 1
-  twoStarCoins: 5
-  threeStarCoins: 10
 --- !u!1 &1261292278
 GameObject:
   m_ObjectHideFlags: 0

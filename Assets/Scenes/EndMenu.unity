@@ -451,9 +451,6 @@ MonoBehaviour:
   - {fileID: 2095425214}
   - {fileID: 779791604}
   - {fileID: 126001106}
-  oneStarCoins: 1
-  twoStarCoins: 5
-  threeStarCoins: 10
   nextLevelButton: {fileID: 783021153}
   levelSelectScene: LevelSelect
   mainMenuScene: MainMenu
@@ -893,7 +890,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &294611910
 RectTransform:
   m_ObjectHideFlags: 0

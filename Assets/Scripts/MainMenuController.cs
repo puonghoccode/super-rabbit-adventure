@@ -5,6 +5,8 @@ public class MainMenuController : MonoBehaviour
 {
     [SerializeField] private string levelSelectScene = "LevelSelect";
     [SerializeField] private string fallbackFirstLevelScene = "1-1";
+    [SerializeField] private bool useLoadingSceneForPlay = true;
+    [SerializeField] private string loadingScene = "Loading";
     [SerializeField] private string rateUrl = "https://store.link";
     [SerializeField] private string joinUsUrl = "https://facebook.com/groups/";
     [SerializeField] private GameObject settingsPanel;
@@ -43,10 +45,19 @@ public class MainMenuController : MonoBehaviour
             targetScene = fallbackFirstLevelScene;
         }
 
-        if (CanLoadScene(targetScene))
+        if (!CanLoadScene(targetScene))
         {
-            SceneManager.LoadScene(targetScene);
+            return;
         }
+
+        if (useLoadingSceneForPlay && CanLoadScene(loadingScene))
+        {
+            LoadingScreenData.SetTarget(targetScene);
+            SceneManager.LoadScene(loadingScene);
+            return;
+        }
+
+        SceneManager.LoadScene(targetScene);
     }
 
     public void OpenSettings()
